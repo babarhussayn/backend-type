@@ -1,0 +1,47 @@
+# to run locally can use connection module along with hosts as localhost
+# local_action module is preferred
+---
+- name: Clone Git Repo
+  hosts: localhost
+  connection: local
+  vars:
+    url: "{{ repo_url }}"
+    dest: "{{ dest }}"
+    site_dir: "{{site_dir}}"
+    build_dir_name: "{{build_dir_name}}"
+
+  tasks:
+    - name: Ensure git is installed
+      become: yes
+      package:
+        name: git
+        state: present
+
+    - name: Clone repo
+      git:
+        repo: "{{ url }}"
+        dest: "~/{{ dest }}"
+        version: main
+        # update: no
+      environment:
+        GIT_SSH_COMMAND: "ssh -i ~/.ssh/id_rsa"
+
+    - name: Setup Project And Build Project
+      stat:
+        path: "~{{dest}}/package.json"
+      register: package_json_path
+
+    - name: Install dependencies and setup project
+      shell: |
+        cd ~{{dest}} && npm i && npm run build
+
+    - name: Ensuring if build is created
+      stat:
+        path: "~{{dest}}/{{build_dir_name}}"
+      register: build_dir_path
+
+    - name: Move Dist to Site Directory
+      become: yes
+      shell: |
+        mv "{{ ansible_env.HOME + dest }}/{{ build_dir_name }}" "{{ ansible_env.HOME + site_dir }}"
+      when: build_dir_path.stat.exists

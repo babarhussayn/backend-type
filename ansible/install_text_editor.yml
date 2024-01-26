@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: install text editor
+      tags: editor,neovim,gedit,vim
+      apt:
+        name:
+          - "{{ editor_name }}"
+      when: ansible_distribution == ["Debian","Ubuntu"]
+    - name: Copy simple HTML file to the server
+      tags: site,static_site
+      copy:
+        src: index.html
+        dest: site-repos/index.html
+        owner: root
+        group: root
+        mode: 0644

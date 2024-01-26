@@ -1,0 +1,12 @@
+---
+- name: Test
+  hosts: localhost
+  connection: local
+  vars:
+    dest: "{{ dest }}"
+
+  tasks:
+    - name: move into dest
+      become: yes
+      shell: |
+        cd ~{{dest}}
