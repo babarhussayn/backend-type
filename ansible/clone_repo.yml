@@ -9,6 +9,10 @@
     dest: "{{ dest }}"
     site_dir: "{{site_dir}}"
     build_dir_name: "{{build_dir_name}}"
+    site_conf_dir: "{{site_conf_dir}}"
+    document_root: "{{document_root}}"
+    server_name: "{{ server_name }}"
+    port: "{{port}}"
 
   tasks:
     - name: Ensure git is installed
@@ -45,3 +49,12 @@
       shell: |
         mv "{{ ansible_env.HOME + dest }}/{{ build_dir_name }}" "{{ ansible_env.HOME + site_dir }}"
       when: build_dir_path.stat.exists
+
+    - name: Server Configuration
+      shell: |
+        cd "{{ansible_env.HOME + site_conf_dir}}" && touch "{{ server_name }}.conf"
+
+    - name: Create Apache Vitual host
+      template:
+        src: config_template
+        dest: "{{ ansible_env.HOME+site_conf_dir}}/{{server_name}}.conf"

@@ -17,6 +17,10 @@ export async function setup(
                    dest=${options.dest} \
                    site_dir=${options.site_dir} \
                    build_dir_name=${options.build_dir_name} \
+                   site_conf_dir=/sites/conf \
+                   document_root=/dr \
+                   server_name=www.ms.com \
+                   port=80
                    " ${playbook} --extra-vars ansible-become-pass=${options.become_password}`;
 
   console.log("Running: ", command);
