@@ -7,7 +7,7 @@ const setup_router = Router();
 setup_router.post("/setup", async (req: Request, res: Response) => {
   const setup_data = req.body;
 
-  const playbook_path = path.join(__dirname, "./../../ansible/clone_repo.yml");
+  const playbook_path = path.join(__dirname, "./../../ansible/setup.yml");
 
   const response = await setup(playbook_path, {
     become_password: "mskhan",
@@ -17,7 +17,11 @@ setup_router.post("/setup", async (req: Request, res: Response) => {
     repo_url: setup_data.repo_url,
   });
 
-  console.log(response);
+  if (response.success) {
+    
+    console.log(response)
+    res.status(201).send(response);
+  }
 });
 
 export default setup_router;
