@@ -16,7 +16,6 @@
 
   tasks:
     # - name: Ensure git is installed
-    #   become: yes
     #   package:
     #     name: git
     #     state: present
@@ -39,16 +38,17 @@
     #   shell: |
     #     cd ~{{dest}} && npm i && npm run build
 
-    # - name: Ensuring if build is created
-    #   stat:
-    #     path: "~{{dest}}/{{build_dir_name}}"
-    #   register: build_dir_path
+    - name: Ensuring if build is created
+      stat:
+        path: "~{{dest}}/{{build_dir_name}}"
+      register: build_dir_path
 
-    # - name: Move Dist to Site Directory
-    #   become: yes
-    #   shell: |
-    #     mv "{{ ansible_env.HOME + dest }}/{{ build_dir_name }}" "{{ ansible_env.HOME + site_dir }}"
-    #   when: build_dir_path.stat.exists
+    - name: Move Dist to Site Directory
+      shell: |
+        mv "{{ ansible_env.HOME + dest }}/{{ build_dir_name }}" "{{ ansible_env.HOME + site_dir }}"
+      when: build_dir_path.stat.exists
+      become: true
+      become_user: mskhan
 
     - name: Server Configuration
       shell: |
