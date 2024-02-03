@@ -1,4 +1,0 @@
-<VirtualHost *:{{port}}>
-    ServerName {{ server_name }}
-    DocumentRoot {{ document_root }}
-</VirtualHost>
