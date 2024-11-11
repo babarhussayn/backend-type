@@ -9,11 +9,11 @@ const app = express();
 Db;
 
 app.use(express.json());
-// app.use(
-//   cors({
-//     origin: ["http://localhost:5173"],
-//   })
-// );
+app.use(
+  cors({
+    origin: ["http://localhost:5001"],
+  })
+);
 routes(app);
 console.log(process.env.PORT);
 const PORT = process.env.PORT;
