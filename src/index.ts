@@ -2,21 +2,23 @@ import express from "express";
 import { Request, Response } from "express";
 import cors from "cors";
 import { config } from "dotenv";
-
+import Db from "./connection/connect";
+import routes from "./routes";
 config();
-
 const app = express();
+Db;
 
 app.use(express.json());
-app.use(
-  cors({
-    origin: ["http://localhost:5173"],
-  }),
-);
-console.log(process.env.IDS_PORT);
-const PORT = process.env.IDS_PORT || 8000;
+// app.use(
+//   cors({
+//     origin: ["http://localhost:5173"],
+//   })
+// );
+routes(app);
+console.log(process.env.PORT);
+const PORT = process.env.PORT;
 
-app.get("/test-route", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("hello");
 });
 
