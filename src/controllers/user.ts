@@ -22,5 +22,38 @@ const user = {
       next(error);
     }
   },
+
+  login: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      res.json({
+        status: false,
+        message: "Please provide email and password!",
+      });
+      return;
+    }
+
+    try {
+      // 2) Check if user exists && password is correct
+      const user = await User.findOne({ email }).select("+password");
+
+      if (!user) {
+        res.json({
+          status: false,
+          message: "Incorrect email or password",
+        });
+        return;
+      }
+      res.status(200).json({ message: "User login successfully", user });
+    } catch (error) {
+      console.log(error);
+    }
+    next();
+  },
 };
 export default user;
