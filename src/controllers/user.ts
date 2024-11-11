@@ -1,5 +1,12 @@
+import bcrypt from "bcrypt";
 import User from "../models/user";
 import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { config } from "dotenv";
+import path from "path";
+config({
+  path: path.join(__dirname, "../../.env"),
+});
 
 const user = {
   signup: async (
@@ -35,7 +42,6 @@ const user = {
         status: false,
         message: "Please provide email and password!",
       });
-      return;
     }
 
     try {
@@ -49,7 +55,22 @@ const user = {
         });
         return;
       }
-      res.status(200).json({ message: "User login successfully", user });
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) {
+        res.json({
+          status: false,
+          message: "Incorrect email or password",
+        });
+        return;
+      }
+
+      const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY!, {
+        expiresIn: "1h",
+      });
+      res.status(200).json({ message: "User login successfully", user, token });
+      // } catch (error) {
+      // res.status(500).json({ error: 'Login failed' });
+      // };
     } catch (error) {
       console.log(error);
     }

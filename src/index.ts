@@ -15,7 +15,7 @@ app.use(
   })
 );
 routes(app);
-console.log(process.env.PORT);
+// console.log(process.env.PORT);
 const PORT = process.env.PORT;
 
 app.get("/", (req: Request, res: Response) => {
