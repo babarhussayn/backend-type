@@ -3,14 +3,25 @@ import { Response, Request } from "express";
 const category = {
   create: async (req: Request, res: Response): Promise<void> => {
     try {
+      const exitCategory = await Category.findOne({ name: req.body.name });
+      if (exitCategory) {
+        res
+          .status(409)
+          .json({ message: "category alresy exits", status: true });
+      }
+
       const category = await Category.create({ ...req.body });
       if (category) {
         res.status(200).json({ message: "category create ", data: category });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
 
-      res.json({ status: false, message: "message" as string });
+      if (err instanceof Error) {
+        res.json({ status: false, message: err.message });
+      } else {
+        res.json({ status: false, message: "An unknown error occurred" });
+      }
     }
   },
   deleteCategory: async (req: Request, res: Response): Promise<void> => {
@@ -23,6 +34,19 @@ const category = {
       }
     } catch (error) {
       res.status(500).json({ status: false, message: "Error" });
+    }
+  },
+
+  getCategory: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const category = await Category.find({});
+      if (category) {
+        res.status(200).json({ status: true, data: category });
+      } else {
+        res.status(404).json({ status: false, message: "Category not found" });
+      }
+    } catch (error) {
+      console.log(error);
     }
   },
 };

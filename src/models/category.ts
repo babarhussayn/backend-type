@@ -9,7 +9,7 @@ const categorySchema = new Schema(
       unique: true,
     },
     description: { type: String, required: true },
-    image: { type: String },
+    imageurl: { type: String, required: [true, "image is required"] },
   },
   {
     timestamps: true,
