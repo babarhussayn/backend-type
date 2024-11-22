@@ -1,42 +1,28 @@
 import { v2 as cloudinary } from "cloudinary";
 
-(async function () {
-  // Configuration
+export async function uploadFile(file: Express.Multer.File): Promise<any> {
+  // Ensure the Cloudinary configuration is set up
   cloudinary.config({
     cloud_name: "drxwjovez",
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
   });
 
-  // Upload an image
-  const uploadResult = await cloudinary.uploader
-    .upload(
-      "https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg",
-      {
-        public_id: "shoes",
+  // Return a Promise for the Cloudinary upload
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream((error, result) => {
+      if (error) {
+        console.error("Error during upload:", error);
+        return reject(error);
       }
-    )
-    .catch((error) => {
-      console.log(error);
+      resolve(result);
     });
 
-  console.log(uploadResult);
-
-  // Optimize delivery by resizing and applying auto-format and auto-quality
-  const optimizeUrl = cloudinary.url("shoes", {
-    fetch_format: "auto",
-    quality: "auto",
+    // Ensure the file buffer is piped to the uploadStream
+    if (file?.buffer) {
+      uploadStream.end(file.buffer);
+    } else {
+      reject(new Error("File buffer is missing."));
+    }
   });
-
-  console.log(optimizeUrl);
-
-  // Transform the image: auto-crop to square aspect_ratio
-  const autoCropUrl = cloudinary.url("shoes", {
-    crop: "auto",
-    gravity: "auto",
-    width: 500,
-    height: 500,
-  });
-
-  console.log(autoCropUrl);
-})();
+}
