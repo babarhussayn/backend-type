@@ -1,6 +1,15 @@
-import mongoose, { model, Mongoose, Schema } from "mongoose";
+import mongoose, { Document, model, Mongoose, Schema, Types } from "mongoose";
 
-const productSchema = new Schema(
+interface IProduct extends Document {
+  name: string;
+  description: string;
+  price: number;
+  stock: string;
+  imageurl: string;
+  category: Types.ObjectId;
+}
+
+const productSchema = new Schema<IProduct>(
   {
     name: {
       type: String,
@@ -26,7 +35,7 @@ const productSchema = new Schema(
     ],
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "category",
+      ref: "Category",
       required: true,
     },
   },

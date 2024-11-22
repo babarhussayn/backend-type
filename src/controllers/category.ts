@@ -49,5 +49,34 @@ const category = {
       console.log(error);
     }
   },
+  updateCategory: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { _id, ...updateData } = req.body;
+
+      if (!_id) {
+        res.status(400).json({ message: "Category ID is required" });
+        return;
+      }
+
+      const category = await Category.findByIdAndUpdate(_id, updateData, {
+        new: true,
+      });
+
+      if (category) {
+        res
+          .status(200)
+          .json({ message: "Category updated successfully", category });
+      } else {
+        res.status(404).json({ message: "Category not found" });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message: "An error occurred while updating the category",
+          error,
+        });
+    }
+  },
 };
 export default category;
