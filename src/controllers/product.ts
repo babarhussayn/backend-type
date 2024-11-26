@@ -44,6 +44,84 @@ const product = {
       }
     }
   },
+  update: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { _id, ...updateData } = req.body;
+
+      if (!_id) {
+        res.status(400).json({ message: "product ID is required" });
+        return;
+      }
+
+      const category = await Product.findByIdAndUpdate(_id, updateData, {
+        new: true,
+      });
+
+      if (category) {
+        res
+          .status(200)
+          .json({ message: "product updated successfully", category });
+      } else {
+        res.status(404).json({ message: "product not found" });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      } else {
+        res.status(500).json({ status: true, message: "erroor" });
+      }
+    }
+  },
+
+  all: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const allData = await Product.find();
+
+      if (!allData) {
+        res.status(404).json({ status: true, message: "Product not found" });
+      }
+
+      res.status(200).json({ status: true, data: allData });
+      return;
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ status: true, message: "erroor" });
+      }
+    }
+  },
+  FindByid: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const findData = await Product.findById(req.body._id);
+
+      if (!findData) {
+        res.status(404).json({ status: true, message: "id not found" });
+      }
+
+      res.status(200).json({ status: true, data: findData });
+      return;
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ status: true, message: error.message });
+      }
+    }
+  },
+
+  delete: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const product = await Product.findByIdAndDelete(req.body._id);
+      if (!product) {
+        res.status(404).json({ status: true, message: "Product not found" });
+      } else {
+        res
+          .status(200)
+          .json({ status: true, message: "product deleted successfully" });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ status: true, message: error.message });
+      }
+    }
+  },
 };
 
 export default product;
