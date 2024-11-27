@@ -88,8 +88,12 @@ const order = {
   },
   updateOrder: async (req: Request, res: Response): Promise<void> => {
     try {
-      const status: string = req.body;
-      const order = await Order.findByIdAndUpdate(status, { new: true });
+      const { status, id } = req.body;
+      const order = await Order.findByIdAndUpdate(
+        id,
+        { status },
+        { new: true }
+      );
       if (!order) {
         res.status(404).json({ status: false, message: "id not found" });
       }
