@@ -1,4 +1,4 @@
-import mongoose, { Mongoose, Schema, Model, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 const orderSchema = new Schema(
   {
@@ -20,18 +20,21 @@ const orderSchema = new Schema(
       {
         productId: {
           type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
         },
-        name: {
-          type: String,
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          min: 1,
-        },
-        price: { type: Number, required: true },
+        quantity: Number,
       },
     ],
+    shippingAddress: {
+      address: String,
+      country: String,
+      state: String,
+      city: String,
+    },
+    ammount: {
+      type: Number,
+    },
+    status: { type: String, default: "Pending" },
   },
   {
     timestamps: true,
