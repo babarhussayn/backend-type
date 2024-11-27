@@ -46,23 +46,25 @@ const order = {
 
   allOrders: async (req: Request, res: Response): Promise<void> => {
     try {
-      const orders = await Order.find({});
+      const orders = await Order.find({})
+        .populate("orderItems.productId")
+        .populate("customer");
       if (!orders) {
         res.status(404).json({ status: false, message: "orders not found" });
       }
       res.status(200).json({ status: true, data: orders });
     } catch (error) {
       if (error instanceof Error) {
-        res.status(500).json({ status: true, message: error.message });
+        res.status(500).json({ status: false, message: error.message });
       }
     }
   },
   orderById: async (req: Request, res: Response): Promise<void> => {
     try {
       const orderId: string = req.body;
-      const order = await Order.findById({
-        _id: orderId,
-      }).populate("items.product");
+      const order = await Order.findById(orderId).populate(
+        "orderItems.productId"
+      );
       res.status(200).json({ status: true, data: order });
     } catch (error) {
       if (error instanceof Error) {
