@@ -72,6 +72,37 @@ const order = {
       }
     }
   },
+  deleteOrder: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const order = await Order.findByIdAndDelete(req.body);
+      if (!order) {
+        res.status(404).json({ status: false, message: "order id not found" });
+      }
+      res
+        .status(200)
+        .json({ status: true, message: "order delete sucessfully" });
+    } catch (error) {
+      if (error instanceof Error)
+        res.status(500).json({ status: false, message: error.message });
+    }
+  },
+  updateOrder: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const status: string = req.body;
+      const order = await Order.findByIdAndUpdate(status, { new: true });
+      if (!order) {
+        res.status(404).json({ status: false, message: "id not found" });
+      }
+      res.status(200).json({
+        status: true,
+        message: "order update sucessfully",
+        data: order,
+      });
+    } catch (error) {
+      if (error instanceof Error)
+        res.status(500).json({ status: false, message: error.message });
+    }
+  },
 };
 
 export default order;

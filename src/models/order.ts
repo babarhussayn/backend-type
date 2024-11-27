@@ -34,7 +34,11 @@ const orderSchema = new Schema(
     ammount: {
       type: Number,
     },
-    status: { type: String, default: "Pending" },
+    status: {
+      type: String,
+      enum: ["UnPaid", "Pending", "Confirmed", "Dispatched", "Rejected"],
+      default: "UnPaid",
+    },
   },
   {
     timestamps: true,
