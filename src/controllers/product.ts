@@ -73,7 +73,7 @@ const product = {
     }
   },
 
-  all: async (req: Request, res: Response): Promise<void> => {
+  all: async (res: Response): Promise<void> => {
     try {
       const allData = await Product.find().populate("category");
 
