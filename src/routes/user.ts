@@ -8,6 +8,4 @@ router.route("/login").post(user.login);
 router.route("/getall").get(verifyToken, user.getall);
 router.route("/:_id").get(user.userbyid);
 
-router.get("/hello", verifyToken);
-
 export default router;

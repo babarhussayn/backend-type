@@ -75,7 +75,7 @@ const product = {
 
   all: async (req: Request, res: Response): Promise<void> => {
     try {
-      const allData = await Product.find();
+      const allData = await Product.find().populate("category");
 
       if (!allData) {
         res.status(404).json({ status: true, message: "Product not found" });
