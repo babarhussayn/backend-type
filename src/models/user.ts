@@ -36,25 +36,26 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-// export const HashPassword = async (password: string): Promise<string> => {
-//   const salt = await bcrypt.genSalt();
-//   const hash = await bcrypt.hash(password, salt);
-//   return hash;
-// };
-// export const ComparePassword = async (
-//   hash: string,
-//   password: string
-// ): Promise<boolean> => {
-//   const isMatch = await bcrypt.compare(password, hash);
-//   return isMatch;
-// };
+//Hash Password //
 userSchema.pre<IUser>("save" as "save", async function (next) {
-  if (!this.isModified("password")) return next();
-
-  this.password = await bcrypt.hash(this.password, 12);
-
-  next();
+  const user = this;
+  if (!user.isModified("password")) return next();
+  try {
+    const salt = await bcrypt.genSalt();
+    user.password = await bcrypt.hash(user.password, salt);
+    next();
+  } catch (err) {
+    if (err instanceof Error) return next(err);
+  }
 });
+
+/*******************      compare password ******************* */
+
+userSchema.methods.comparePassword = async function (
+  password: string
+): Promise<boolean> {
+  return bcrypt.compare(password, this.password);
+};
 
 const User = model<IUser>("User", userSchema);
 export default User;

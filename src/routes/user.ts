@@ -5,7 +5,7 @@ const router = Router();
 
 router.route("/signup").post(user.signup);
 router.route("/login").post(user.login);
-router.route("/getall").get(user.getall);
+router.route("/getall").get(verifyToken, user.getall);
 router.route("/:_id").get(user.userbyid);
 
 router.get("/hello", verifyToken);

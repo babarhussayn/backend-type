@@ -47,6 +47,7 @@ const order = {
   allOrders: async (req: Request, res: Response): Promise<void> => {
     try {
       const orders = await Order.find({})
+        .sort({ createdAt: -1 })
         .populate("orderItems.productId")
         .populate("customer");
       if (!orders) {

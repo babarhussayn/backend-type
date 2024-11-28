@@ -4,11 +4,12 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import path from "path";
-import { Error as MongooseError } from "mongoose";
-config({
-  path: path.join(__dirname, "../../.env"),
-});
 
+// config({
+//   path: path.join(__dirname, "../../.env"),
+// });
+config();
+const mykey = process.env.SECRET_KEY;
 const user = {
   signup: async (
     req: Request,
@@ -29,9 +30,8 @@ const user = {
         .status(201)
         .json({ message: "User created successfully", user: newUser });
     } catch (error) {
-      if (error instanceof MongooseError.ValidationError) {
-        const errors = Object.values(error.errors).map((err) => err.message);
-        res.status(400).json({ message: "Validation failed", errors });
+      if (error instanceof Error) {
+        res.status(400).json({ message: "Validation failed", error });
         return;
       }
 
@@ -58,7 +58,7 @@ const user = {
       const user = await User.findOne({ email }).select("+password");
 
       if (!user) {
-        res.json({
+        res.status(404).json({
           status: false,
           message: "Incorrect email or password",
         });
@@ -73,9 +73,11 @@ const user = {
         return;
       }
 
-      const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY!, {
-        expiresIn: "1h",
+      const token = jwt.sign({ userId: user._id }, mykey!, {
+        //+
+        expiresIn: "1min",
       });
+
       res.status(200).json({ message: " login successfully", user, token });
       // } catch (error) {
       // res.status(500).json({ error: 'Login failed' });
