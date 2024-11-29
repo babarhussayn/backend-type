@@ -18,6 +18,7 @@ const productSchema = new Schema<IProduct>(
     description: {
       type: String,
       trim: true,
+      required: true,
     },
     price: {
       type: Number,
