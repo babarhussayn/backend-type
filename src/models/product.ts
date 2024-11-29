@@ -7,6 +7,7 @@ interface IProduct extends Document {
   stock: string;
   imageurl: string;
   category: Types.ObjectId;
+  title: string;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -33,6 +34,10 @@ const productSchema = new Schema<IProduct>(
         required: true,
       },
     ],
+    title: {
+      type: String,
+      required: true,
+    },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
