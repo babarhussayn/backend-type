@@ -8,6 +8,7 @@ interface IProduct extends Document {
   imageurl: string;
   category: Types.ObjectId;
   title: string;
+  size: string;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -43,6 +44,11 @@ const productSchema = new Schema<IProduct>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
+    },
+    size: {
+      type: String, // Array of strings
+      enum: ["small", "medium", "large", "extraLarge"],
+      default: "medium",
     },
   },
   {
