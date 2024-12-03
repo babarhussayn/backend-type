@@ -1,29 +1,63 @@
+import mongoose from "mongoose";
 import Category from "../models/category";
+import Product from "../models/product";
 import { Response, Request } from "express";
 const category = {
   create: async (req: Request, res: Response): Promise<void> => {
+    const { name, products, imageurl, description } = req.body;
+
+    let validProductIds: string[] = [];
     try {
-      const exitCategory = await Category.findOne({ name: req.body.name });
+      if (
+        products &&
+        typeof products === "string" &&
+        products !== "undefined"
+      ) {
+        validProductIds = JSON.parse(products).map(
+          (product: string) => product
+        );
+      }
+
+      const exitCategory = await Category.findOne({ name });
       if (exitCategory) {
         res
           .status(409)
-          .json({ message: "category already exits", status: true });
+          .json({ message: "Category already exists", status: true });
+        return;
       }
 
-      const category = await Category.create({ ...req.body });
+      const category = await Category.create({
+        name,
+        description,
+        imageurl,
+        products: validProductIds,
+      });
+
+      await Product.updateMany(
+        { _id: { $in: validProductIds } },
+        {
+          $set: {
+            category: new mongoose.Types.ObjectId(category._id.toString()),
+          },
+        }
+      );
+
       if (category) {
-        res.status(200).json({ message: "category create ", data: category });
+        res.status(200).json({ message: "Category created", data: category });
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
 
       if (err instanceof Error) {
-        res.json({ status: false, message: err.message });
+        res.status(500).json({ status: false, message: err.message });
       } else {
-        res.json({ status: false, message: "An unknown error occurred" });
+        res
+          .status(500)
+          .json({ status: false, message: "An unknown error occurred" });
       }
     }
   },
+
   deleteCategory: async (req: Request, res: Response): Promise<void> => {
     try {
       const delCategory = await Category.findByIdAndDelete(req.params.id);

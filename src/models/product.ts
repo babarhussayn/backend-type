@@ -6,7 +6,7 @@ interface IProduct extends Document {
   price: number;
   stock: string;
   imageurl: string;
-  category: Types.ObjectId;
+  category: mongoose.Schema.Types.ObjectId;
   title: string;
   size: string;
 }
