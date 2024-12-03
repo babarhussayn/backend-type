@@ -7,7 +7,7 @@ const category = {
       if (exitCategory) {
         res
           .status(409)
-          .json({ message: "category alresy exits", status: true });
+          .json({ message: "category already exits", status: true });
       }
 
       const category = await Category.create({ ...req.body });
@@ -39,7 +39,11 @@ const category = {
 
   getCategory: async (req: Request, res: Response): Promise<void> => {
     try {
-      const category = await Category.find({});
+      let category = [];
+      category = await Category.find().populate({
+        path: "products",
+        select: "id name images",
+      });
       if (category) {
         res.status(200).json({ status: true, data: category });
       } else {
@@ -70,12 +74,10 @@ const category = {
         res.status(404).json({ message: "Category not found" });
       }
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          message: "An error occurred while updating the category",
-          error,
-        });
+      res.status(500).json({
+        message: "An error occurred while updating the category",
+        error,
+      });
     }
   },
 };

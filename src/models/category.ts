@@ -1,5 +1,4 @@
-import { model } from "mongoose";
-import { Model, Mongoose, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 
 const categorySchema = new Schema(
   {
@@ -10,6 +9,13 @@ const categorySchema = new Schema(
     },
     description: { type: String, required: true },
     imageurl: { type: String, required: [true, "image is required"] },
+
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   {
     timestamps: true,
