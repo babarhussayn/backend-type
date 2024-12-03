@@ -1,7 +1,7 @@
 import Product from "../models/product";
 import { Request, Response } from "express";
 import { uploadFile } from "../utils/cloudinary";
-import mongoose from "mongoose";
+
 import Category from "../models/category";
 const product = {
   create: async (req: Request, res: Response): Promise<void> => {
@@ -20,7 +20,7 @@ const product = {
         // Add the uploaded image paths to the data object
         product.images = imagePaths;
       }
-      console.log(product);
+
       // Create the new product with the provided data
       const newProduct = await Product.create(product);
       await Category.findByIdAndUpdate(product.category, {
