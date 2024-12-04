@@ -76,7 +76,7 @@ const category = {
       let category = [];
       category = await Category.find().populate({
         path: "products",
-        select: "id name imageurl",
+        select: "id name imageurl price description",
       });
       if (category) {
         res.status(200).json({ status: true, data: category });
